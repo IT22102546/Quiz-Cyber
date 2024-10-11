@@ -9,6 +9,9 @@ import PrivateRoute from './Components/PrivateRoute';
 import OnlyAdminPrivateRoute from './Components/OnlyAdminPrivateRoute';
 import AddQuize from './Pages/AddQuize';
 import EditQuiz from './Pages/EditQuiz';
+import MainQuize from './Pages/MainQuize';
+import Company from './Pages/Company';
+import TrainingQuize from './Pages/TrainingQuize';
 
 
 export default function App() {
@@ -19,10 +22,14 @@ export default function App() {
         <Route path="/" element={<Home/>}/>
         <Route path="/sign-in" element={<SignIn/>}/>
         <Route path="/sign-up" element={<SignUp/>}/>
+        
+        <Route path="/company" element={<Company/>}/>
        
 
         <Route element={<PrivateRoute/>}/>
           <Route path="/dashboard" element={<DashBoard/>}/>
+          <Route path="/mainquize" element={<MainQuize/>}/>
+          <Route path="/trainquize" element={<TrainingQuize/>}/>
           
         <Route/>
 

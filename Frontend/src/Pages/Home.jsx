@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
-import { useSelector, useDispatch } from 'react-redux'; 
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
-  const { currentUser, loading } = useSelector((state) => state.user); 
-  const [message, setMessage] = useState('');
-  const [progress, setProgress] = useState(0); 
-  const [isAnimated, setIsAnimated] = useState(false); 
 
-  const quizScore = currentUser?.result; 
+  const { currentUser, loading } = useSelector((state) => state.user);
+  const [message, setMessage] = useState('');
+  const [progress, setProgress] = useState(0);
+  const [isAnimated, setIsAnimated] = useState(false);
+  const [quizScore, setQuizScore] = useState(0); 
+
+  console.log(currentUser);
 
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setIsAnimated(true);
     }, 300);
 
@@ -23,31 +24,45 @@ export default function Home() {
       return;
     }
 
-    if (quizScore !== undefined) {
-      setMessage(quizScore > 45 ? 'Congratulations! You scored above 45%' : 'Score at least 45% to access the company page.');
-      setTimeout(() => {
-        setProgress(quizScore); 
-      }, 300); 
-    }
-  }, [currentUser, quizScore]); 
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`/api/user/updateresult/${currentUser._id}`);
+        const data = await response.json();
+        if (data?.result !== undefined) {
+          setQuizScore(data.result); 
+          setMessage(data.result > 45 ? 'Congratulations! You scored above 45%' : 'Score at least 45% to access the company page.');
+          setProgress(data.result);
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+    const interval = setInterval(fetchUserData, 5000);
+
+    return () => {
+      clearTimeout(timer);
+      clearInterval(interval);
+    };
+  }, [currentUser]);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>; 
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   const handleNavigation = () => {
     if (quizScore > 45) {
-      navigate('/compage'); 
+      navigate('/company');
     } else {
-      navigate('/quizpage'); 
+      navigate('/mainquize');
     }
   };
 
-  const quizPercentage = quizScore !== undefined ? quizScore : 0;
+  const quizPercentage = quizScore;
 
   return (
     <div className="flex flex-col w-full min-h-screen bg-gray-50">
-      {/* Hero Section */}
       <header className="bg-gradient-to-r from-blue-500 to-purple-600 text-white py-16 shadow-md">
         <div className="container mx-auto text-center">
           <h1 className={`text-5xl font-extrabold ${isAnimated ? 'slide-in-down' : ''} font-serif`}>
@@ -59,7 +74,6 @@ export default function Home() {
         </div>
       </header>
 
-      {/* Content Section */}
       <main className="flex flex-col w-full py-12 bg-gradient-to-b from-blue-100 to-white backdrop-blur-md shadow-lg rounded-lg">
         <div className="container mx-auto px-6">
           <div className="flex justify-between items-center mb-16">
@@ -71,9 +85,7 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Quiz Score & Progress Tracker */}
           <div className={`flex items-center justify-between mb-12 bg-gradient-to-br from-white to-blue-50 p-8 rounded-xl shadow-lg border-2 border-blue-200 hover:shadow-xl transition-shadow duration-300 ${isAnimated ? 'fade-in-delay' : ''}`}>
-            {/* Quiz Score */}
             <div className={`flex flex-col items-center text-center ${isAnimated ? 'zoom-in' : ''}`}>
               <p className="text-2xl font-semibold text-gray-800 mb-2 font-serif">Your Quiz Score:</p>
               <p className="text-5xl font-extrabold text-gray-900">{quizPercentage}%</p>
@@ -82,7 +94,6 @@ export default function Home() {
               </p>
             </div>
 
-            {/* Custom Circular Progress Tracker */}
             <div className={`relative w-40 h-40 progress-circle ${isAnimated ? 'draw' : ''}`}>
               <svg className="absolute top-0 left-0 w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                 <path
@@ -108,18 +119,18 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Animated Motivation Block */}
             <div className={`flex flex-col items-center text-center motivation-block ${isAnimated ? 'fade-in-delay' : ''}`}>
-              <img src="https://img.icons8.com/fluent/48/000000/trophy.png" alt="Trophy Icon" className="w-12 h-12 mb-4 bounce" />
+              {/* Animated Trophy Icon */}
+              <img src="https://img.icons8.com/fluent/48/000000/trophy.png" alt="Trophy Icon" className={`w-12 h-12 mb-4 ${isAnimated ? 'bounce' : ''}`} />
               <p className="text-xl font-semibold text-gray-700">Aim higher and reach the next level!</p>
             </div>
           </div>
 
           <div className={`text-center ${isAnimated ? 'fade-in' : ''}`}>
-            {message && <p className="text-xl font-semibold text-gray-800 mb-8 font-serif">{message}</p>} 
-            
+            {message && <p className="text-xl font-semibold text-gray-800 mb-8 font-serif">{message}</p>}
+
             {quizScore !== undefined && (
-              <button 
+              <button
                 className={`px-8 py-4 rounded-lg text-xl font-bold text-white transition duration-300 ease-in-out 
                   ${quizScore > 45 ? 'bg-green-500 hover:bg-green-600 shadow-md' : 'bg-red-500 hover:bg-red-600 shadow-md'} font-sans`}
                 onClick={handleNavigation}
@@ -131,7 +142,6 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer Section */}
       <footer className="bg-gray-900 text-white py-6 mt-auto">
         <div className="container mx-auto text-center">
           <p className="text-sm font-light">&copy; 2024 Quiz Corp. All Rights Reserved.</p>
@@ -168,54 +178,69 @@ export default function Home() {
         }
         .motivation-block {
           opacity: 0;
-          animation: fadeIn 1.5s forwards;
+          animation: fadeIn 1.2s forwards;
         }
         .bounce {
-          animation: bounce 2s infinite;
+          animation: bounce 1s infinite;
         }
 
         @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
           to {
             opacity: 1;
           }
         }
-
         @keyframes slideInLeft {
+          from {
+            transform: translateX(-100%);
+          }
           to {
             transform: translateX(0);
           }
         }
-
         @keyframes slideInDown {
+          from {
+            transform: translateY(-100%);
+          }
           to {
             transform: translateY(0);
           }
         }
-
         @keyframes slideInUp {
+          from {
+            transform: translateY(100%);
+          }
           to {
             transform: translateY(0);
           }
         }
-
         @keyframes zoomIn {
+          from {
+            transform: scale(0);
+          }
           to {
             transform: scale(1);
           }
         }
-
         @keyframes drawCircle {
+          from {
+            stroke-dashoffset: 100;
+          }
           to {
             stroke-dashoffset: 0;
           }
         }
-
         @keyframes bounce {
-          0%, 100% {
+          0%, 20%, 50%, 80%, 100% {
             transform: translateY(0);
           }
-          50% {
+          40% {
             transform: translateY(-10px);
+          }
+          60% {
+            transform: translateY(-5px);
           }
         }
       `}</style>

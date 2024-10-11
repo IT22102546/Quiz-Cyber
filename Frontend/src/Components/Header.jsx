@@ -1,6 +1,6 @@
 import { Avatar, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar } from "flowbite-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { HiShoppingBag, HiUser, HiMenu } from 'react-icons/hi';
+import { HiUser, HiMenu } from 'react-icons/hi';
 import { useDispatch, useSelector } from "react-redux";
 import { signOut } from "../redux/user/userSlice";
 
@@ -71,14 +71,7 @@ export default function Header() {
 
           {/* User controls */}
           <div className="flex items-center space-x-4">
-            {currentUser && (
-              <Link to="/cart">
-                <div className="flex relative">
-                  <HiShoppingBag className="mr-1 text-white" style={{ fontSize: '24px' }} />
-                </div>
-              </Link>
-            )}
-
+           
             {currentUser ? (
               <Dropdown arrowIcon={false} inline label={
                 <Avatar alt="user" img={currentUser.profilePicture} rounded className="h-10 w-10" />

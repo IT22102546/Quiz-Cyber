@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector } from 'react-redux'; // Import useSelector
 import { useNavigate } from 'react-router-dom';
 import { Table, Button, Modal } from 'flowbite-react';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import html2pdf from 'html2pdf.js'; // Make sure to import this if it's being used
 
 export default function DashQuiz() {
   const { currentUser } = useSelector((state) => state.user);
@@ -10,12 +11,13 @@ export default function DashQuiz() {
   const [showModal, setShowModal] = useState(false);
   const [quizIdToDelete, setQuizIdToDelete] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [category, setCategory] = useState(''); // State for selected category
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const res = await fetch(`/api/quize/get-quizzes?searchTerm=${searchTerm}`);
+        const res = await fetch(`/api/quize/get-quizzes?searchTerm=${searchTerm}&category=${category}`);
         const data = await res.json();
         if (res.ok) {
           setQuizzes(data.quizzes);
@@ -25,7 +27,7 @@ export default function DashQuiz() {
       }
     };
     fetchQuizzes();
-  }, [searchTerm]);
+  }, [searchTerm, category]);
 
   const handleDeleteQuiz = async () => {
     try {
@@ -45,8 +47,63 @@ export default function DashQuiz() {
     setSearchTerm(e.target.value);
   };
 
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value); // Update category state when dropdown changes
+  };
+
   const handleEditQuiz = (quiz) => {
     navigate(`/edit-quiz/${quiz._id}`, { state: { quiz } });
+  };
+
+  const generateReport = () => {
+    const content = `
+      <style>
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        th {
+          background-color: #f2f2f2;
+          font-size: 14px; 
+        }
+        td {
+          font-size: 12px; 
+        }
+      </style>
+      <h1><b>Quizzes Report</b></h1>
+      <br>
+      <table>
+        <thead>
+          <tr>
+            <th>Date Created</th>
+            <th>Question</th>
+            <th>Answers</th>
+            <th>Correct Answer</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${quizzes.map((quiz) => `
+            <tr>
+              <td>${new Date(quiz.createdAt).toLocaleDateString()}</td>
+              <td>${quiz.question}</td>
+              <td>
+                <ul style="list-style-type: none; padding: 0;">
+                  ${quiz.answers.map(answer => `<li>${answer}</li>`).join('')}
+                </ul>
+              </td>
+              <td>${quiz.answers[quiz.correctAnswerIndex]}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    `;
+
+    html2pdf().from(content).set({ margin: 1, filename: 'quizzes_report.pdf' }).save();
   };
 
   return (
@@ -59,7 +116,25 @@ export default function DashQuiz() {
           onChange={handleSearch}
           className="px-3 py-2 w-150 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500 mr-2 h-10 placeholder-gray-500"
         />
+        <select
+          value={category}
+          onChange={handleCategoryChange}
+          className="px-3 py-2 w-48 border border-gray-300 rounded-md focus:outline-none focus:border-blue-500"
+        >
+          <option value="">All Categories</option>
+          <option value="Main">Main</option>
+          <option value="Secondary">Secondary</option>
+          <option value="Third">Third</option>
+        </select>
       </div>
+
+      {/* Generate Report Button */}
+      <Button 
+        onClick={generateReport} 
+        className="mb-4 bg-blue-600 text-white hover:bg-blue-700 rounded-md px-4 py-2"
+      >
+        Generate Report
+      </Button>
 
       <div className="table-auto overflow-x-scroll mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
         {quizzes.length > 0 ? (

@@ -20,6 +20,10 @@ const quizSchema = new mongoose.Schema({
     min: 0,
     max: 4, 
   },
+  category:{
+    type:String,
+    required:true
+  }
 }, { timestamps: true });
 
 const Quiz = mongoose.model('Quiz', quizSchema);

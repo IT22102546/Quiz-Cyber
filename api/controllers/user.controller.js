@@ -318,3 +318,19 @@ export const resignAdmin = async (req, res, next) =>{
   
 };
 
+export const fetchUserResult = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return sendErrorResponse(res, 'User not found');
+    }
+
+    res.status(200).json({ success: true, result: user.result });
+  } catch (error) {
+    console.error('Error fetching user result:', error);
+    sendErrorResponse(res, 'Error fetching user data');
+  }
+};
+

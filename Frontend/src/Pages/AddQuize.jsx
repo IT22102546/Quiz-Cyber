@@ -4,6 +4,7 @@ export default function AddQuiz() {
   const [question, setQuestion] = useState('');
   const [answers, setAnswers] = useState(Array(5).fill(''));
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState(0);
+  const [category, setCategory] = useState('');
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -20,6 +21,7 @@ export default function AddQuiz() {
       question,
       answers,
       correctAnswerIndex,
+      category,
     };
 
     try {
@@ -43,6 +45,7 @@ export default function AddQuiz() {
       setQuestion('');
       setAnswers(Array(5).fill(''));
       setCorrectAnswerIndex(0);
+      setCategory('');
       setError('');
     } catch (error) {
       console.error('Error:', error);
@@ -57,6 +60,8 @@ export default function AddQuiz() {
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-8 space-y-6">
         {error && <p className="text-red-500">{error}</p>}
         {successMessage && <p className="text-green-500">{successMessage}</p>}
+        
+        {/* Question Input */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2" htmlFor="question">Question:</label>
           <input
@@ -69,7 +74,25 @@ export default function AddQuiz() {
             placeholder="Enter the quiz question..."
           />
         </div>
-        
+
+        {/* Category Dropdown */}
+        <div>
+          <label className="block text-lg font-medium text-gray-700 mb-2" htmlFor="category">Category:</label>
+          <select
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            required
+            className="border border-gray-300 p-3 w-full rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+          >
+            <option value="" disabled>Select category</option>
+            <option value="Main">Main</option>
+            <option value="Secondary">Secondary</option>
+            <option value="Thid">Third</option>
+          </select>
+        </div>
+
+        {/* Answer Inputs */}
         {answers.map((answer, index) => (
           <div key={index} className="space-y-2">
             <label className="block text-lg font-medium text-gray-700" htmlFor={`answer${index}`}>Answer {index + 1}:</label>

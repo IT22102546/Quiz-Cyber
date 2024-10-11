@@ -1,6 +1,7 @@
 import express  from "express";
 import { verifyToken } from "../utils/verifyUser.js";
-import { assignAdmin,  deleteUser, forgetpassword, getAdmins, getCustomers, getUser, getUsers, resetpassword, resignAdmin, signout, test, updateResetPassword, updateUser } from "../controllers/user.controller.js";
+import { assignAdmin,  deleteUser, fetchUserResult, forgetpassword, getAdmins, getCustomers, getUser, getUsers, resetpassword, resignAdmin, signout, test, updateResetPassword, updateUser } from "../controllers/user.controller.js";
+import { updateScore } from "../controllers/quize.controller.js";
 
 
 const router = express.Router();
@@ -18,6 +19,8 @@ router.post('/forgetpassword',forgetpassword);
 router.get('/resetpassword/:id/:token',resetpassword);
 router.post('/updateResetPassword/:id/:token',updateResetPassword);
 router.get('/:userId', getUser);
+router.get('/updateresult/:id', fetchUserResult);
+router.post('/update-score', verifyToken, updateScore); 
 
 
 

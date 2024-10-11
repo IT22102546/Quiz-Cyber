@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const EditQuiz = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { quiz } = location.state; // Get the quiz data passed through state
-  const [question, setQuestion] = useState(quiz.question);
-  const [answers, setAnswers] = useState(quiz.answers);
-  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(quiz.correctAnswerIndex);
+
+  const [question, setQuestion] = useState(quiz?.question || '');
+  const [answers, setAnswers] = useState(quiz?.answers || ['', '', '', '']);
+  const [correctAnswerIndex, setCorrectAnswerIndex] = useState(quiz?.correctAnswerIndex || 0);
+  const [category, setCategory] = useState(quiz?.category || 'Main'); // Initialize category state with default value 'Main'
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
@@ -19,11 +21,12 @@ const EditQuiz = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const quizData = {
       question,
       answers,
       correctAnswerIndex,
+      category, // Include category in the request data
     };
 
     try {
@@ -42,9 +45,10 @@ const EditQuiz = () => {
       const data = await res.json();
       console.log('Quiz updated:', data);
       setSuccessMessage('Quiz updated successfully!');
+      setError('');
 
-     
-      navigate('/dashboard?tab=quize'); 
+      // Navigate back to the dashboard or quizzes page after successful update
+      navigate('/dashboard?tab=quize');
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to update quiz. Please try again.');
@@ -58,6 +62,8 @@ const EditQuiz = () => {
       <form onSubmit={handleSubmit} className="bg-white shadow-lg rounded-lg p-8 space-y-6">
         {error && <p className="text-red-500">{error}</p>}
         {successMessage && <p className="text-green-500">{successMessage}</p>}
+        
+        {/* Question Input */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2" htmlFor="question">Question:</label>
           <input
@@ -71,6 +77,50 @@ const EditQuiz = () => {
           />
         </div>
 
+        {/* Category Selection (Main/Secondary) */}
+        <div>
+          <label className="block text-lg font-medium text-gray-700 mb-2">Category:</label>
+          <div className="flex space-x-4">
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="main"
+                name="category"
+                value="Main"
+                checked={category === 'Main'}
+                onChange={() => setCategory('Main')}
+                className="h-5 w-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label htmlFor="main" className="ml-2 text-gray-600">Main</label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="secondary"
+                name="category"
+                value="Secondary"
+                checked={category === 'Secondary'}
+                onChange={() => setCategory('Secondary')}
+                className="h-5 w-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label htmlFor="secondary" className="ml-2 text-gray-600">Secondary</label>
+            </div>
+            <div className="flex items-center">
+              <input
+                type="radio"
+                id="Third"
+                name="category"
+                value="Third"
+                checked={category === 'Third'}
+                onChange={() => setCategory('Third')}
+                className="h-5 w-5 text-blue-600 border-gray-300 focus:ring-blue-500"
+              />
+              <label htmlFor="Third" className="ml-2 text-gray-600">Third</label>
+            </div>
+          </div>
+        </div>
+
+        {/* Answer Inputs */}
         {answers.map((answer, index) => (
           <div key={index} className="space-y-2">
             <label className="block text-lg font-medium text-gray-700" htmlFor={`answer${index}`}>Answer {index + 1}:</label>

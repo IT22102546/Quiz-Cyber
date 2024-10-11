@@ -1,8 +1,9 @@
 import Quiz from '../models/quize.model.js';
+import User from '../models/user.model.js';
 
 export const addQuiz = async (req, res) => {
   try {
-    const { question, answers, correctAnswerIndex } = req.body;
+    const { question, answers, correctAnswerIndex,category } = req.body;
 
     if (!question || !Array.isArray(answers) || answers.length !== 5 || correctAnswerIndex < 0 || correctAnswerIndex > 4) {
       return res.status(400).json({
@@ -14,6 +15,7 @@ export const addQuiz = async (req, res) => {
       question,
       answers,
       correctAnswerIndex,
+      category
     });
 
     await newQuiz.save();
@@ -31,13 +33,23 @@ export const addQuiz = async (req, res) => {
 };
 
 export const getAllQuizzes = async (req, res) => {
-  const { searchTerm } = req.query; // Get the search term from the query parameters
+  const { searchTerm, category } = req.query; // Get both searchTerm and category from the query parameters
 
   try {
     // Create a regex for case-insensitive searching
-    const query = searchTerm ? { question: { $regex: searchTerm, $options: 'i' } } : {};
+    const query = {};
     
-    // Fetch quizzes from the database, filtering by the query if a search term is provided
+    // Add searchTerm filter
+    if (searchTerm) {
+      query.question = { $regex: searchTerm, $options: 'i' };
+    }
+
+    // Add category filter
+    if (category) {
+      query.category = category;
+    }
+    
+    // Fetch quizzes from the database, filtering by the query if a search term or category is provided
     const quizzes = await Quiz.find(query); 
 
     return res.status(200).json({
@@ -51,6 +63,7 @@ export const getAllQuizzes = async (req, res) => {
     });
   }
 };
+
 
 export const getQuizById = async (req, res) => {
   const { id } = req.params; // Get the quiz ID from the route parameters
@@ -74,7 +87,7 @@ export const getQuizById = async (req, res) => {
 // New updateQuiz function
 export const updateQuiz = async (req, res) => {
   const { id } = req.params; // Get the quiz ID from the route parameters
-  const { question, answers, correctAnswerIndex } = req.body; // Destructure the request body
+  const { question, answers, correctAnswerIndex,category } = req.body; // Destructure the request body
 
   try {
     // Validate input data
@@ -86,7 +99,7 @@ export const updateQuiz = async (req, res) => {
 
     const updatedQuiz = await Quiz.findByIdAndUpdate(
       id,
-      { question, answers, correctAnswerIndex },
+      { question, answers, correctAnswerIndex,category },
       { new: true, runValidators: true } // Return the updated document and run validators
     );
 
@@ -124,3 +137,28 @@ export const deleteQuiz = async (req, res) => {
     });
   }
 };
+
+export const updateScore = async (req, res, next) => {
+  const { userId, score } = req.body;
+
+  console.log(userId)
+
+  try {
+    // Update user score in the database
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { result: score },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return next(errorHandler(404, 'User not found'));
+    }
+
+    res.status(200).json({ message: 'Score updated successfully' });
+  } catch (error) {
+    console.error('Error updating score:', error);
+    next(error);
+  }
+};
+
