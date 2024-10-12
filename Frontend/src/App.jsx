@@ -11,7 +11,10 @@ import AddQuize from './Pages/AddQuize';
 import EditQuiz from './Pages/EditQuiz';
 import MainQuize from './Pages/MainQuize';
 import Company from './Pages/Company';
+import Aboutus from './Pages/Aboutus';
+
 import TrainingQuize from './Pages/TrainingQuize';
+import Contactus from './Pages/Contactus';
 
 
 export default function App() {
@@ -24,6 +27,9 @@ export default function App() {
         <Route path="/sign-up" element={<SignUp/>}/>
         
         <Route path="/company" element={<Company/>}/>
+        <Route path="/about" element={<Aboutus/>}/>
+        <Route path="/contactus" element={<Contactus/>}/>
+
        
 
         <Route element={<PrivateRoute/>}/>

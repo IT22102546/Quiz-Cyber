@@ -52,7 +52,7 @@ export default function Header() {
               About Us
             </NavLink>
             <NavLink 
-              to="/contact" 
+              to="/contactus" 
               className={({ isActive }) => 
                 isActive ?"text-black" : "text-white"
               }
