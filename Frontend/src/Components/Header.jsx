@@ -20,13 +20,13 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="border-b-2 relative z-50 bg-blue-600">
+    <Navbar className="border-b-2 relative z-50 bg-yellow-100">
       <div className="container mx-auto flex items-center justify-between py-4">
 
         {/* Logo */}
         <div className="flex items-center">
-          <NavLink to="/" className="self-center whitespace-nowrap text-3xl font-semibold font-tangerine text-white">
-            Logo
+          <NavLink to="/" className="self-center whitespace-nowrap text-3xl font-semibold font-tangerine text-black">
+            <img src="/logo.jpg" alt="" srcset="" className="w-24 " />
           </NavLink>
         </div>
 
@@ -36,7 +36,7 @@ export default function Header() {
             <NavLink 
               to="/" 
               className={({ isActive }) => 
-                isActive ? "text-black" : "text-white"
+                isActive ? "text-black" : "text-black"
               }
             >
               Home
@@ -46,7 +46,7 @@ export default function Header() {
             <NavLink 
               to="/about" 
               className={({ isActive }) => 
-                isActive ?"text-black" : "text-white"
+                isActive ?"text-black" : "text-black"
               }
             >
               About Us
@@ -54,19 +54,19 @@ export default function Header() {
             <NavLink 
               to="/contactus" 
               className={({ isActive }) => 
-                isActive ?"text-black" : "text-white"
+                isActive ?"text-black" : "text-black"
               }
             >
               Contact Us
             </NavLink>
-            <NavLink 
+            {/* <NavLink 
               to="/progress" 
               className={({ isActive }) => 
-                isActive ? "text-black" : "text-white"
+                isActive ? "text-black" : "text-black"
               }
             >
               My Progress
-            </NavLink>
+            </NavLink> */}
           </div>
 
           {/* User controls */}
@@ -88,7 +88,7 @@ export default function Header() {
               </Dropdown>
             ) : (
               <Link to="/sign-in">
-                <HiUser className="text-white" />
+                <HiUser className="text-black" />
               </Link>
             )}
           </div>
@@ -96,7 +96,7 @@ export default function Header() {
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <Navbar.Toggle>
-              <HiMenu className="text-white text-3xl" />
+              <HiMenu className="text-black text-3xl" />
             </Navbar.Toggle>
           </div>
         </div>
@@ -108,7 +108,7 @@ export default function Header() {
           <NavLink 
             to="/" 
             className={({ isActive }) => 
-              isActive ? "text-black" : "text-white"
+              isActive ? "text-black" : "text-black"
             }
           >
             Home
@@ -116,7 +116,7 @@ export default function Header() {
           <NavLink 
             to="/category" 
             className={({ isActive }) => 
-              isActive ? "text-black" : "text-white"
+              isActive ? "text-black" : "text-black"
             }
           >
             Badges
@@ -124,7 +124,7 @@ export default function Header() {
           <NavLink 
             to="/category" 
             className={({ isActive }) => 
-              isActive ? "text-black" : "text-white"
+              isActive ? "text-black" : "text-black"
             }
           >
             Guid Activities
@@ -132,7 +132,7 @@ export default function Header() {
           <NavLink 
             to="/product-page" 
             className={({ isActive }) => 
-              isActive ? "text-black" : "text-white"
+              isActive ? "text-black" : "text-black"
             }
           >
             Scout Shop
@@ -140,7 +140,7 @@ export default function Header() {
           <NavLink 
             to="/articles" 
             className={({ isActive }) => 
-              isActive ?"text-black" : "text-white"
+              isActive ?"text-black" : "text-black"
             }
           >
             Articles
@@ -148,7 +148,7 @@ export default function Header() {
           <NavLink 
             to="/history-page" 
             className={({ isActive }) => 
-              isActive ? "text-black" : "text-white"
+              isActive ? "text-black" : "text-black"
             }
           >
             History
